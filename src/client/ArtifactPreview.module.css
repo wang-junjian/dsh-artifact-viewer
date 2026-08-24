@@ -1,0 +1,156 @@
+.preview {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--dsw-alias-border-l2-darkmode-thin);
+  flex-shrink: 0;
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--dsw-alias-label-primary);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.bookmark,
+.copy,
+.open,
+.session {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+}
+
+.bookmark[aria-pressed='true'] {
+  color: var(--dsw-alias-label-brand);
+}
+
+.session:hover,
+.copy:hover,
+.open:hover {
+  color: var(--dsw-alias-label-brand);
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-secondary);
+}
+
+.error {
+  padding: 8px;
+  border-radius: 6px;
+  background: var(--dsw-alias-interactive-bg-hover-danger);
+  color: var(--dsw-alias-state-error-primary);
+  font-size: 12px;
+}
+
+.placeholder {
+  padding: 24px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: white;
+}
+
+.code:global(.md-code-block) {
+  margin: 0;
+  background: transparent;
+  border-radius: 0;
+}
+
+/* Hide CodeBlock's own language banner + built-in copy button. */
+.code:global(.md-code-block) > div:first-child {
+  display: none;
+}
+
+.code:global(.md-code-block) pre,
+.code:global(.md-code-block) pre:global(.shiki) {
+  padding: 0;
+  background: transparent !important;
+  border-radius: 0;
+  counter-reset: line;
+  font-family: var(--ds-font-family-code, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+  font-size: 13px;
+  line-height: 18px;
+  /* Use normal white-space on <pre> so the newline characters that shiki emits
+     between <span class="line"> blocks collapse; each .line keeps pre-formatted
+     text so indentation is preserved. */
+  white-space: normal;
+  word-break: normal;
+  overflow-x: auto;
+}
+
+.code:global(.md-code-block) pre :global(.line) {
+  display: block;
+  position: relative;
+  padding-left: 48px;
+  min-height: 18px;
+  white-space: pre;
+}
+
+.code:global(.md-code-block) pre :global(.line)::before {
+  content: counter(line);
+  counter-increment: line;
+  position: absolute;
+  left: 0;
+  width: 36px;
+  padding-right: 12px;
+  text-align: right;
+  color: var(--dsw-alias-label-tertiary);
+  user-select: none;
+}
+
+.plain {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 20px;
+}
