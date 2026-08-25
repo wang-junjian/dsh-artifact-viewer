@@ -1,7 +1,23 @@
 {
-  "name": "@wang-junjian/dsh-artifact-viewer",
+  "name": "@wangjunjian/dsh-artifact-viewer",
   "version": "0.1.0",
   "description": "DeepSeek Harness bundle plugin that adds an artifact sidebar and bookmarking for agent conversations.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wang-junjian/dsh-artifact-viewer.git"
+  },
+  "homepage": "https://github.com/wang-junjian/dsh-artifact-viewer#readme",
+  "bugs": {
+    "url": "https://github.com/wang-junjian/dsh-artifact-viewer/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "plugin",
+    "artifact",
+    "viewer",
+    "bookmark"
+  ],
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
@@ -15,16 +31,22 @@
       "default": "./lib/client.js"
     },
     "./cordis.patch.yml": "./cordis.patch.yml",
-    "./src/*": "./src/*",
     "./package.json": "./package.json"
   },
   "files": [
     "lib/index.js",
     "lib/client.js",
     "lib/types/**/*.d.ts",
-    "cordis.patch.yml"
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "docs/best-practices.md",
+    "LICENSE"
   ],
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
@@ -50,36 +72,36 @@
     "format": "biome format --write ."
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-attachment": "workspace:^",
-    "@deepseek-ai/dsh-client-connection": "workspace:^",
-    "@deepseek-ai/dsh-client-locale": "workspace:^",
-    "@deepseek-ai/dsh-client-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-conversation": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-layout": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-primitives": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-sidebar": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:^",
-    "@deepseek-ai/dsh-home-paths": "workspace:^",
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-attachment": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-connection": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-locale": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-runtime": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-conversation": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-layout": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-primitives": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-sidebar": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-slots": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-home-paths": "^0.1.1-rc.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "@deepseek-ai/schemastery": "link:/Users/junjian/GitHub/deepseek-ai/deepseek-harness/vendor/schemastery"
+    "@deepseek-ai/schemastery": "^3.18.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.10",
-    "@deepseek-ai/cordis": "link:/Users/junjian/GitHub/deepseek-ai/deepseek-harness/vendor/cordis",
-    "@deepseek-ai/dsh-attachment": "link:/Users/junjian/GitHub/deepseek-ai/deepseek-harness/packages/attachment/attachment",
-    "@deepseek-ai/dsh-client-connection": "link:/Users/junjian/GitHub/deepseek-ai/deepseek-harness/packages/client/connection",
-    "@deepseek-ai/dsh-client-locale": "link:/Users/junjian/GitHub/deepseek-ai/deepseek-harness/packages/client/locale",
-    "@deepseek-ai/dsh-client-runtime": "link:/Users/junjian/GitHub/deepseek-ai/deepseek-harness/packages/client/runtime",
-    "@deepseek-ai/dsh-client-ui-conversation": "link:/Users/junjian/GitHub/deepseek-ai/deepseek-harness/packages/client/ui-conversation",
-    "@deepseek-ai/dsh-client-ui-layout": "link:/Users/junjian/GitHub/deepseek-ai/deepseek-harness/packages/client/ui-layout",
-    "@deepseek-ai/dsh-client-ui-primitives": "link:/Users/junjian/GitHub/deepseek-ai/deepseek-harness/packages/client/ui-primitives",
-    "@deepseek-ai/dsh-client-ui-sidebar": "link:/Users/junjian/GitHub/deepseek-ai/deepseek-harness/packages/client/ui-sidebar",
-    "@deepseek-ai/dsh-client-ui-slots": "link:/Users/junjian/GitHub/deepseek-ai/deepseek-harness/packages/client/ui-slots",
-    "@deepseek-ai/dsh-home-paths": "link:/Users/junjian/GitHub/deepseek-ai/deepseek-harness/packages/util/home-paths",
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-attachment": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-connection": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-locale": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-runtime": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-conversation": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-layout": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-primitives": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-sidebar": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-slots": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-home-paths": "^0.1.1-rc.2",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^22.20.0",
     "@types/react": "~18.3.1",

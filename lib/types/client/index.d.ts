@@ -4,7 +4,7 @@
  * Registers a sidebar footer toggle, a right-hand overlay panel, and an
  * intercepted message-image renderer that adds bookmark stars.
  *
- * @module @wang-junjian/dsh-artifact-viewer/client
+ * @module @wangjunjian/dsh-artifact-viewer/client
  */
 import type { ConnectionHandle } from '@deepseek-ai/dsh-client-connection/client';
 import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client';

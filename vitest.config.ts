@@ -8,6 +8,11 @@ export default defineConfig({
       ['tests/**/*.client.spec.tsx', 'jsdom'],
       ['tests/**/*.client.spec.ts', 'jsdom'],
     ],
+    server: {
+      deps: {
+        inline: [/@deepseek-ai/],
+      },
+    },
   },
   resolve: {
     // Source files use .js extensions for NodeNext compatibility; vitest resolves

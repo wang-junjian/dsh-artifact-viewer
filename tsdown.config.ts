@@ -14,7 +14,7 @@ import { transform } from 'lightningcss'
 import type { UserConfig } from 'tsdown'
 
 /** Package id stamped into the module-loader registration and style tags. */
-const PLUGIN_ID = '@wang-junjian/dsh-artifact-viewer'
+const PLUGIN_ID = '@wangjunjian/dsh-artifact-viewer'
 
 /**
  * Specifiers provided by the web shell's frozen module table. Every other

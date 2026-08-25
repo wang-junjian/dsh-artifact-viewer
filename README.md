@@ -1,4 +1,4 @@
-# @wang-junjian/dsh-artifact-viewer
+# @wangjunjian/dsh-artifact-viewer
 
 [中文](README.zh.md) | English
 
@@ -41,7 +41,7 @@ the `deepseek-harness` repository itself.
 dsh plugin --profile web add ~/GitHub/wang-junjian/dsh-artifact-viewer
 
 # Or from a registry, once published
-dsh plugin --profile web add @wang-junjian/dsh-artifact-viewer
+dsh plugin --profile web add @wangjunjian/dsh-artifact-viewer
 ```
 
 The bundle is appended to `dsh.profile.bundles` automatically.

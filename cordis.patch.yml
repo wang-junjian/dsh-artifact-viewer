@@ -1,6 +1,6 @@
-# Patch layer for the @wang-junjian/dsh-artifact-viewer bundle.
+# Patch layer for the @wangjunjian/dsh-artifact-viewer bundle.
 # Inserts one row that registers the artifact-viewer plugin.
 
 - insert:
     - id: artifact-viewer
-      name: '@wang-junjian/dsh-artifact-viewer'
+      name: '@wangjunjian/dsh-artifact-viewer'

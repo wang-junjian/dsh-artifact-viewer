@@ -35,12 +35,22 @@ export function collectArtifacts(snapshot: ConversationSnapshot): Artifact[] {
   return artifacts;
 }
 
+interface FileLocationView {
+  card: string;
+  kind?: string;
+  locations?: Array<{ path: string }>;
+}
+
 function collectToolArtifacts(node: ToolResultNode, add: (artifact: Artifact) => void): void {
   const views = [node.resultView, node.callView];
   for (const view of views) {
     if (view === null) continue;
-    if (view.card === 'diff' || (view.card === 'generic' && view.kind === 'edit')) {
-      for (const location of view.locations ?? []) {
+    // The published DSH types do not yet expose kind/locations on result views,
+    // but the runtime (local harness) does. Cast through unknown to compile
+    // against npm while preserving runtime behavior.
+    const fileView = view as unknown as FileLocationView;
+    if (fileView.card === 'diff' || (fileView.card === 'generic' && fileView.kind === 'edit')) {
+      for (const location of fileView.locations ?? []) {
         const path = location.path;
         add({
           id: `file:${path}:${node.seq}`,

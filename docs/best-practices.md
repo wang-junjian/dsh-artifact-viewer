@@ -1,6 +1,6 @@
 # DSH 插件开发最佳实践总结
 
-本文档基于 `@wang-junjian/dsh-artifact-viewer` 的开发过程，梳理在 DeepSeek Harness（DSH）生态中开发 bundle 插件的关键实践、常见踩坑与推荐做法。
+本文档基于 `@wangjunjian/dsh-artifact-viewer` 的开发过程，梳理在 DeepSeek Harness（DSH）生态中开发 bundle 插件的关键实践、常见踩坑与推荐做法。
 
 ## 1. 插件架构：host 端与 client 端分离
 
@@ -197,7 +197,7 @@ DSH 本身提供了多个展示生成文件的可点击表面，默认行为是�
 dsh plugin --profile web add /Users/junjian/GitHub/wang-junjian/dsh-artifact-viewer
 
 # 发布后
-dsh plugin --profile web add @wang-junjian/dsh-artifact-viewer
+dsh plugin --profile web add @wangjunjian/dsh-artifact-viewer
 ```
 
 - 插件不修改 `deepseek-harness` 源码，独立构建后通过 profile 加载。

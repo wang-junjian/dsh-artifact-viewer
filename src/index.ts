@@ -1,12 +1,12 @@
 /**
- * `@wang-junjian/dsh-artifact-viewer`: a DeepSeek Harness bundle plugin that
+ * `@wangjunjian/dsh-artifact-viewer`: a DeepSeek Harness bundle plugin that
  * adds an artifact sidebar and bookmarking for agent conversations.
  *
  * The plugin registers a loopback RPC channel on the host for persisting
  * bookmarks and previewing files, and a set of client slots that render the
  * artifact panel and intercept message-image rendering.
  *
- * @module @wang-junjian/dsh-artifact-viewer
+ * @module @wangjunjian/dsh-artifact-viewer
  */
 
 import { mkdir, readFile, realpath, rename, writeFile } from 'node:fs/promises';

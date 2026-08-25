@@ -1,4 +1,4 @@
-# @wang-junjian/dsh-artifact-viewer
+# @wangjunjian/dsh-artifact-viewer
 
 [English](README.md) | 中文
 
@@ -38,7 +38,7 @@
 dsh plugin --profile web add ~/GitHub/wang-junjian/dsh-artifact-viewer
 
 # 或者发布之后从 registry 安装
-dsh plugin --profile web add @wang-junjian/dsh-artifact-viewer
+dsh plugin --profile web add @wangjunjian/dsh-artifact-viewer
 ```
 
 bundle 会被自动追加到 `dsh.profile.bundles`。
