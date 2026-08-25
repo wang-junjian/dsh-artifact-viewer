@@ -1,7 +1,10 @@
 # @wang-junjian/dsh-artifact-viewer
 
+[中文](README.zh.md) | English
+
 A DeepSeek Harness bundle plugin that adds an artifact sidebar and bookmarking
-for agent conversations.
+for agent conversations. It does **not** modify the `deepseek-harness` source
+tree; it is built as a standalone plugin and loaded into the `web` profile.
 
 ## What it does
 
@@ -16,6 +19,11 @@ for agent conversations.
 - **Opens clicked artifacts in preview tabs** inside the panel and renders
   HTML (sandboxed iframe), Markdown, images, SVG, JSON, and source code.
 - **Can open files with the host default application** via the workspace API.
+- **Expands the panel to full window** with a header button; automatically uses
+  an opaque background when the user has set a background image, while keeping
+  the translucent blurred look for solid-color themes.
+- **Navigates from a bookmark back to its source session** via the header
+  "open conversation" button in the bookmarks tab or preview pane.
 
 ## Installation
 
@@ -24,7 +32,7 @@ the `deepseek-harness` repository itself.
 
 ```sh
 # From a local checkout
-dsh plugin --profile web add /Users/junjian/GitHub/wang-junjian/dsh-artifact-viewer
+dsh plugin --profile web add ~/GitHub/wang-junjian/dsh-artifact-viewer
 
 # Or from a registry, once published
 dsh plugin --profile web add @wang-junjian/dsh-artifact-viewer
@@ -53,6 +61,7 @@ pnpm install
 pnpm run typecheck
 pnpm run build
 pnpm run test
+pnpm run lint
 ```
 
 ## Project layout
@@ -74,6 +83,18 @@ src/
     ArtifactPreview.tsx       # Preview pane for selected artifact
     ArtifactMessageImages.tsx # conversation.message.images replacement
 ```
+
+## Supported previews
+
+| File kind | Rendering |
+|-----------|-----------|
+| HTML, HTM | Sandboxed iframe |
+| Markdown, MD | Markdown text |
+| SVG, PNG, JPG, JPEG, WEBP, GIF | Image |
+| JSON | Syntax-highlighted code (via CodeBlock) |
+| Source code (py, js, ts, jsx, tsx, css, scss, less, rs, go, c, cpp, cc, java, kt, swift, rb, php, sh, sql, xml, yaml, yml, toml, dockerfile, txt, log) | Syntax-highlighted code |
+| Plain text / unknown | Pre-formatted text |
+| Video (mp4, webm, mov) | Listed; no inline preview |
 
 ## Bookmarks file format
 
@@ -100,7 +121,8 @@ The host half registers a loopback-only channel at `/artifact-viewer`:
 - `bookmarks/read` — returns the bookmark array.
 - `bookmarks/write` — writes the bookmark array.
 - `file/preview` — returns UTF-8 file content or base64-encoded binary data
-  (for images/SVG/HTML) up to 512 KiB.
+  (for images/SVG/HTML) up to 512 KiB. Non-UTF-8 text files are rejected with
+  an error so that binary files are not rendered as garbled text.
 
 ## Known limitations
 
@@ -109,3 +131,5 @@ The host half registers a loopback-only channel at `/artifact-viewer`:
 - Preview of bookmarked images is limited because bookmarks only store the
   attachment id, not the full image reference.
 - Video files are listed but not previewed inline.
+- Bookmarks created before the `sessionId` field was added cannot be navigated
+  back to their source session.
