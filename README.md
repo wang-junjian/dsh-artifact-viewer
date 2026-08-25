@@ -122,6 +122,25 @@ isolated:
 }
 ```
 
+### Storage location and cross-browser consistency
+
+The DSH home directory is resolved via `@deepseek-ai/dsh-home-paths`, which
+honors the `$DSH_HOME` environment variable and falls back to `~/.dsh`. Because
+the store lives in the Harness home rather than inside any project directory,
+switching between browsers (Chrome, Safari, etc.) for the same project reads the
+same bookmark file, provided both browsers resolve the workspace to the same
+canonical path. The host normalizes `projectPath` with `fs.realpath` before it
+is used as a lookup key, so macOS symbolic-link differences such as
+`/var/folders` vs `/private/var/folders` do not split bookmarks across browsers.
+
+### Migration from earlier versions
+
+Versions before this change stored bookmarks at
+`<project-root>/.dsh/bookmarks.json`. Those files are no longer read; if you
+have existing bookmarks in the old location, move them into the new store under
+`~/.dsh/storages/artifact-viewer/bookmarks.json` and wrap them under the
+project's canonical path key, or re-create the bookmarks in the UI.
+
 ## Host RPC endpoints
 
 The host half registers a loopback-only channel at `/artifact-viewer`:

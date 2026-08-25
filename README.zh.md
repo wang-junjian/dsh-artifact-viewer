@@ -118,6 +118,23 @@ src/
 }
 ```
 
+### 存储位置与跨浏览器一致性
+
+DSH 用户目录通过 `@deepseek-ai/dsh-home-paths` 解析，优先使用环境变量
+`$DSH_HOME`，否则回退到 `~/.dsh`。由于收藏存储在 Harness 用户目录而不是
+项目目录下，同一项目在不同浏览器（Chrome、Safari 等）中打开时会读取同一
+个收藏文件，前提是两个浏览器解析出的工作空间路径一致。host 端在把路径
+用作查询 key 之前会先用 `fs.realpath` 规范化，因此 macOS 上
+`/var/folders` 和 `/private/var/folders` 这类符号链接差异不会导致收藏
+在不同浏览器中分裂。
+
+### 从旧版本迁移
+
+在此之前的版本把收藏保存在 `<project-root>/.dsh/bookmarks.json`。这些
+文件已不再被读取；如果你已有旧位置的收藏，可以手动迁移到
+`~/.dsh/storages/artifact-viewer/bookmarks.json`，把它们放到对应项目
+的规范化路径 key 下，也可以直接在 UI 中重新收藏。
+
 ## Host RPC 端点
 
 Host 端注册了一个仅本地回环的 RPC 通道 `/artifact-viewer`：
