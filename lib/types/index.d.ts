@@ -19,7 +19,7 @@ export interface Config {
 }
 /** Schemastery config schema with defaults. */
 export declare const Config: z<Config>;
-/** One bookmarked artifact persisted under <project>/.dsh/bookmarks.json. */
+/** One bookmarked artifact persisted under the DSH home store. */
 export interface BookmarkRecord {
     /** Stable artifact identity used for deduplication. */
     id: string;

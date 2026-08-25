@@ -13,6 +13,7 @@ import { mkdir, readFile, realpath, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Context } from '@deepseek-ai/cordis';
 import type { ConnectionRpcHandler, HostConnectionHandle } from '@deepseek-ai/dsh-client-connection';
+import { dshHomePath } from '@deepseek-ai/dsh-home-paths';
 import z from '@deepseek-ai/schemastery';
 
 /** RPC result shape returned by every artifact-viewer endpoint. */
@@ -33,7 +34,7 @@ export const Config: z<Config> = z.object({
   enabled: z.boolean().default(true),
 });
 
-/** One bookmarked artifact persisted under <project>/.dsh/bookmarks.json. */
+/** One bookmarked artifact persisted under the DSH home store. */
 export interface BookmarkRecord {
   /** Stable artifact identity used for deduplication. */
   id: string;
@@ -53,9 +54,18 @@ export interface BookmarkRecord {
   createdAt: number;
 }
 
+/** On-disk format: bookmarks grouped by canonical project path. */
+interface BookmarkStore {
+  /** Map from canonical project path to its bookmark list. */
+  projects: Record<string, BookmarkRecord[]>;
+  /** Schema version for future migrations. */
+  version: number;
+}
+
 /** Loopback-only RPC endpoints exposed by this plugin. */
 const CHANNEL = '/artifact-viewer';
 const PREVIEW_MAX_BYTES = 512 * 1024;
+const STORE_VERSION = 1;
 
 /**
  * Register the artifact-viewer host services.
@@ -141,35 +151,41 @@ export function apply(ctx: Context, config: Config): void {
 }
 
 async function readBookmarks(projectPath: string): Promise<RpcResult> {
-  const file = bookmarksFile(projectPath);
-  try {
-    const text = await readFile(file, 'utf8');
-    const parsed = JSON.parse(text) as unknown;
-    if (!Array.isArray(parsed)) {
-      throw new Error('bookmarks file is not an array');
-    }
-    return { ok: true, value: parsed };
-  } catch (error: unknown) {
-    if (isENOENT(error)) {
-      return { ok: true, value: [] };
-    }
-    return {
-      ok: false,
-      error: {
-        code: 'internal',
-        message: errorMessage(error),
-        details: {},
-      },
-    };
-  }
+  const store = await loadBookmarkStore();
+  return { ok: true, value: store.projects[projectPath] ?? [] };
 }
 
 async function writeBookmarks(projectPath: string, bookmarks: unknown[]): Promise<RpcResult> {
-  const file = bookmarksFile(projectPath);
+  const store = await loadBookmarkStore();
+  store.projects[projectPath] = bookmarks as BookmarkRecord[];
+  const result = await saveBookmarkStore(store);
+  if (!result.ok) return result;
+  return { ok: true, value: null };
+}
+
+async function loadBookmarkStore(): Promise<BookmarkStore> {
+  const file = bookmarksStoreFile();
   try {
-    await mkdir(dotdshDir(projectPath), { recursive: true });
+    const text = await readFile(file, 'utf8');
+    const parsed = JSON.parse(text) as unknown;
+    if (!isBookmarkStore(parsed)) {
+      throw new Error('bookmarks store has invalid shape');
+    }
+    return parsed;
+  } catch (error: unknown) {
+    if (isENOENT(error)) {
+      return { projects: {}, version: STORE_VERSION };
+    }
+    throw error;
+  }
+}
+
+async function saveBookmarkStore(store: BookmarkStore): Promise<RpcResult> {
+  const file = bookmarksStoreFile();
+  try {
+    await mkdir(storagesDir(), { recursive: true });
     const tmp = `${file}.tmp`;
-    await writeFile(tmp, `${JSON.stringify(bookmarks, null, 2)}\n`);
+    await writeFile(tmp, `${JSON.stringify(store, null, 2)}\n`);
     await rename(tmp, file);
     return { ok: true, value: null };
   } catch (error: unknown) {
@@ -182,6 +198,17 @@ async function writeBookmarks(projectPath: string, bookmarks: unknown[]): Promis
       },
     };
   }
+}
+
+function isBookmarkStore(value: unknown): value is BookmarkStore {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as Record<string, unknown>).version === 'number' &&
+    typeof (value as Record<string, unknown>).projects === 'object' &&
+    (value as Record<string, unknown>).projects !== null &&
+    !Array.isArray((value as Record<string, unknown>).projects)
+  );
 }
 
 async function previewFile(
@@ -240,12 +267,12 @@ function inferMediaType(path: string): string {
   return 'application/octet-stream';
 }
 
-function dotdshDir(projectPath: string): string {
-  return join(projectPath, '.dsh');
+function storagesDir(): string {
+  return dshHomePath('storages', 'artifact-viewer');
 }
 
-function bookmarksFile(projectPath: string): string {
-  return join(dotdshDir(projectPath), 'bookmarks.json');
+function bookmarksStoreFile(): string {
+  return join(storagesDir(), 'bookmarks.json');
 }
 
 function isENOENT(error: unknown): boolean {

@@ -95,20 +95,27 @@ src/
 
 ## 收藏文件格式
 
-收藏数据保存在 `<project-root>/.dsh/bookmarks.json`：
+收藏数据保存在 DeepSeek Harness 用户目录下：
+`~/.dsh/storages/artifact-viewer/bookmarks.json`。文件按规范化的项目路径
+分组，多个项目可以共用同一个存储文件但彼此隔离：
 
 ```json
-[
-  {
-    "id": "file:/workspace/foo.ts:42",
-    "kind": "file",
-    "name": "foo.ts",
-    "path": "/workspace/foo.ts",
-    "seq": 42,
-    "sessionId": "<session-id>",
-    "createdAt": 1234567890
+{
+  "version": 1,
+  "projects": {
+    "/workspace/project-a": [
+      {
+        "id": "file:/workspace/foo.ts:42",
+        "kind": "file",
+        "name": "foo.ts",
+        "path": "/workspace/foo.ts",
+        "seq": 42,
+        "sessionId": "<session-id>",
+        "createdAt": 1234567890
+      }
+    ]
   }
-]
+}
 ```
 
 ## Host RPC 端点

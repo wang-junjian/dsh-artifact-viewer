@@ -79,6 +79,12 @@ describe('artifact-viewer plugin', () => {
 
     const readResult = await handler('bookmarks/read', { projectPath: tmpDir });
     expect(readResult).toEqual({ ok: true, value: [bookmark] });
+
+    // Different project should not see the same bookmarks.
+    const otherDir = await mkdtemp(join(tmpdir(), 'dsh-artifact-viewer-other-'));
+    const otherRead = await handler('bookmarks/read', { projectPath: otherDir });
+    expect(otherRead).toEqual({ ok: true, value: [] });
+    await rm(otherDir, { recursive: true, force: true });
   });
 
   it('previews a small text file through the RPC channel', async () => {

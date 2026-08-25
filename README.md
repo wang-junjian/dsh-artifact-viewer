@@ -98,20 +98,28 @@ src/
 
 ## Bookmarks file format
 
-Bookmarks are stored at `<project-root>/.dsh/bookmarks.json`:
+Bookmarks are stored in the DeepSeek Harness home under
+`~/.dsh/storages/artifact-viewer/bookmarks.json`. The file groups bookmarks by
+canonical project path, so multiple projects can share one store while staying
+isolated:
 
 ```json
-[
-  {
-    "id": "file:/workspace/foo.ts:42",
-    "kind": "file",
-    "name": "foo.ts",
-    "path": "/workspace/foo.ts",
-    "seq": 42,
-    "sessionId": "<session-id>",
-    "createdAt": 1234567890
+{
+  "version": 1,
+  "projects": {
+    "/workspace/project-a": [
+      {
+        "id": "file:/workspace/foo.ts:42",
+        "kind": "file",
+        "name": "foo.ts",
+        "path": "/workspace/foo.ts",
+        "seq": 42,
+        "sessionId": "<session-id>",
+        "createdAt": 1234567890
+      }
+    ]
   }
-]
+}
 ```
 
 ## Host RPC endpoints
