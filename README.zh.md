@@ -55,8 +55,8 @@ bundle 会被自动追加到 `dsh.profile.bundles`。
 
 ## 开发
 
-本包使用指向本地 `deepseek-harness` 仓库的 `link:` 依赖，因此无需放入
-monorepo workspace 即可解析 `@deepseek-ai/dsh-*` 包。
+`@deepseek-ai/dsh-*` 依赖均为 registry 上的常规包（目前是 rc 版本），无需本地检出
+`deepseek-harness` 仓库。
 
 ```sh
 pnpm install

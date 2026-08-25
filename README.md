@@ -58,9 +58,8 @@ You can override the plugin config in your profile's `cordis.patch.yml`:
 
 ## Development
 
-This package uses `link:` dependencies that point at a local checkout of
-`deepseek-harness`, so it can resolve `@deepseek-ai/dsh-*` packages without
-being inside the monorepo workspace.
+The `@deepseek-ai/dsh-*` dependencies are regular registry packages (currently
+release candidates), so no local checkout of `deepseek-harness` is needed.
 
 ```sh
 pnpm install

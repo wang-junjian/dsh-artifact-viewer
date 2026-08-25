@@ -1,1 +1,0 @@
-{"version":3,"file":"ArtifactKindIcon.d.ts","sourceRoot":"","sources":["../../../src/client/ArtifactKindIcon.tsx"],"names":[],"mappings":"AAAA,iEAAiE;AAIjE,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,cAAc,CAAC;AAEhD,UAAU,qBAAqB;IAC7B,IAAI,EAAE,WAAW,CAAC;IAClB,IAAI,CAAC,EAAE,MAAM,CAAC;CACf;AAED,wBAAgB,gBAAgB,CAAC,EAAE,IAAI,EAAE,IAAS,EAAE,EAAE,qBAAqB,GAAG,KAAK,CAAC,YAAY,CAwB/F"}
