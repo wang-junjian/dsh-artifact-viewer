@@ -9,7 +9,7 @@
  * @module @wang-junjian/dsh-artifact-viewer
  */
 
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, realpath, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Context } from '@deepseek-ai/cordis';
 import type { ConnectionRpcHandler, HostConnectionHandle } from '@deepseek-ai/dsh-client-connection';
@@ -69,8 +69,8 @@ export function apply(ctx: Context, config: Config): void {
   connection.rpc.handle(
     CHANNEL,
     async (endpoint, payload): Promise<RpcResult> => {
-      const projectPath = (payload as { projectPath?: unknown }).projectPath;
-      if (typeof projectPath !== 'string') {
+      const rawProjectPath = (payload as { projectPath?: unknown }).projectPath;
+      if (typeof rawProjectPath !== 'string') {
         return {
           ok: false,
           error: {
@@ -80,6 +80,7 @@ export function apply(ctx: Context, config: Config): void {
           },
         };
       }
+      const projectPath = await resolveProjectPath(rawProjectPath);
 
       if (endpoint === 'bookmarks/read') {
         return readBookmarks(projectPath);
@@ -262,6 +263,17 @@ function isValidUtf8(buffer: Buffer): boolean {
     return true;
   } catch {
     return false;
+  }
+}
+
+async function resolveProjectPath(raw: string): Promise<string> {
+  try {
+    return await realpath(raw);
+  } catch (error) {
+    if (isENOENT(error)) {
+      return raw;
+    }
+    throw error;
   }
 }
 
