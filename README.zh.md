@@ -11,10 +11,15 @@
 - **自动检测对话中生成的产物**：工具创建或编辑的文件、JSON 工具结果，以及
   消息中的图片附件。
 - **在右侧渲染悬浮面板**（注册到 `shell.overlay`），列出当前会话的产物。
-- **允许用户收藏产物**；收藏数据由 host 端持久化到
-  `<project-root>/.dsh/bookmarks.json`。
+- **允许用户收藏产物**；收藏数据由 host 端持久化到 Harness 用户目录
+  `~/.dsh/storages/artifact-viewer/bookmarks.json`。
 - **替换默认的消息图片渲染器**（`conversation.message.images`），在图片上
   叠加收藏星星按钮。
+- **拦截会话窗口中的文件链接**，包括工具行 `.fileLink` 按钮、
+  `ui-deliverables` 的“产物”标签、结束语中的行内代码文件提及、Markdown
+  链接（如 `[sample.html](/Users/.../sample.html)`）和行内 `<code>` 路径
+  （如 `/Users/.../cat.svg`），点击生成的文件时直接在产物面板中打开，而
+  不是调用宿主默认应用。
 - **点击产物在面板内以标签页预览**，支持 HTML（沙箱 iframe）、Markdown、
   图片、SVG、JSON 和源代码。
 - **通过 workspace API 调用宿主默认应用打开文件**。

@@ -11,6 +11,8 @@ export interface ArtifactViewerState {
   expanded: boolean;
   /** Current panel width in pixels. */
   width: number;
+  /** Relative or absolute path queued for opening from a conversation link. */
+  pendingOpenPath?: string;
 }
 
 export const createArtifactViewerStore = () =>
@@ -39,6 +41,14 @@ export const createArtifactViewerStore = () =>
       },
       setWidth: (draft: ArtifactViewerState, width: number) => {
         draft.width = width;
+      },
+      openArtifactByPath: (draft: ArtifactViewerState, path: string) => {
+        draft.panelOpen = true;
+        draft.activeTab = 'current';
+        draft.pendingOpenPath = path;
+      },
+      clearPendingOpenPath: (draft: ArtifactViewerState) => {
+        draft.pendingOpenPath = undefined;
       },
     },
   });

@@ -12,10 +12,16 @@ tree; it is built as a standalone plugin and loaded into the `web` profile.
   by tools, JSON tool results, and image attachments in messages.
 - **Renders a right-hand overlay panel** (registered into `shell.overlay`)
   listing artifacts for the current session.
-- **Lets users bookmark artifacts**; bookmarks are persisted in
-  `<project-root>/.dsh/bookmarks.json` by the host half.
+- **Lets users bookmark artifacts**; bookmarks are persisted in the Harness
+  home at `~/.dsh/storages/artifact-viewer/bookmarks.json` by the host half.
 - **Replaces the default message-image renderer**
   (`conversation.message.images`) with one that adds a bookmark star overlay.
+- **Intercepts file links in the conversation window**, including tool-row
+  `.fileLink` buttons, the turn-tail "产物" chips from `ui-deliverables`,
+  inline-code file mentions in the closing prose, markdown links such as
+  `[sample.html](/Users/.../sample.html)`, and inline `<code>` paths such as
+  `/Users/.../cat.svg`, so clicking a generated file opens it inside the
+  artifact panel instead of the host default application.
 - **Opens clicked artifacts in preview tabs** inside the panel and renders
   HTML (sandboxed iframe), Markdown, images, SVG, JSON, and source code.
 - **Can open files with the host default application** via the workspace API.

@@ -63,7 +63,7 @@ single slot "conversation.message.images" already has a registration at priority
 
 ### 持久化收藏
 
-- 收藏数据保存在 `<project>/.dsh/bookmarks.json`。
+- 收藏数据保存在 DSH home 下的 `~/.dsh/storages/artifact-viewer/bookmarks.json`，通过 `@deepseek-ai/dsh-home-paths` 解析，支持 `$DSH_HOME` 覆盖。
 - 写文件时使用 `writeFile(tmp)` + `rename(tmp, file)`，保证原子性。
 - bookmark 记录中保留 `sessionId`，用于后续"跳转回源会话"功能。
 
@@ -103,6 +103,41 @@ single slot "conversation.message.images" already has a registration at priority
 
 - 文本文件读取后先校验 UTF-8，避免二进制文件显示乱码。
 - 二进制文件走 base64 通道。
+
+### 拦截会话中的文件链接
+
+DSH 本身提供了多个展示生成文件的可点击表面，默认行为是调用宿主默认应用打开。为了让这些链接都走插件自己的预览面板，推荐在面板组件里注册一个全局 capture 阶段点击监听器，而不是替换每一个 slot。
+
+#### 原因
+
+- `conversation.chat.turnTail`、`conversation.message.images`、`tool.call.toolview` 等 slot 彼此独立，逐个替换工作量大。
+- 默认的 `FileMutationRow` 等组件未 export，替换会丢失 diff 预览等原生功能。
+- 事件委托只需识别 DOM 特征，不影响 DSH 默认渲染。
+
+#### 需要拦截的表面
+
+| 表面 | DOM 特征 | 路径来源 |
+|------|----------|----------|
+| 工具行文件链接 | `className` 包含 `fileLink` 的 `<button>` | `textContent` |
+| `ui-deliverables` 产物 chip | `[data-produced-files-row]` 内的 `<button>` | `title` |
+| 结束语文件提及 | `className` 包含 `fileMention` 的 `<button>` | `title` |
+| Markdown 本地链接 | `<a>` 的 `href` | `getAttribute('href')` |
+| 行内 `<code>` 绝对路径 | `<code>`（排除 `<pre>` 内） | `textContent` |
+
+#### 实现要点
+
+- 使用 `document.addEventListener('click', handler, true)` 在 capture 阶段拦截，然后 `preventDefault()` + `stopPropagation()`，确保 DSH 原生的 `openFile` 不会执行。
+- 对 `<a>` 要跳过 `http/https/ftp/mailto/data/blob` 等外部 URL；对 `file://` 前缀做剥离。
+- 把路径写入共享 store 的 `pendingOpenPath`，再用 `useEffect` 异步解析：
+  - 以 `/` 开头的视为绝对路径；否则按相对路径拼上 `projectPath`。
+  - 先在当前会话已采集的 artifact 中匹配，命中则直接打开；未命中则创建临时 `DisplayItem` 预览。
+- 全局监听器只在面板组件挂载期间存在，依赖 `actions`（DSH store 的 actions 是稳定的）。
+
+#### 注意事项
+
+- `~/` 路径在浏览器端无法直接展开，建议要么在 host RPC 增加展开端点，要么暂时不拦截。
+- 只拦截有明显文件特征的 DOM，避免把普通链接、命令、锚点也抢走。
+- 捕获阶段拦截后，`<code>` 文本的复制/选择行为会受影响；若后续需要保留选择，可在 handler 里区分单击与拖拽。
 
 ## 7. 背景与全屏适配
 

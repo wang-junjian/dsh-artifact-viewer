@@ -8,7 +8,13 @@ import css from './ArtifactPanel.module.css';
 import { ArtifactPreview } from './ArtifactPreview.js';
 import { collectArtifacts } from './artifacts.js';
 import type { BookmarkController } from './bookmarks.js';
-import { artifactToDisplay, bookmarkToDisplay, type DisplayItem, displayItemToBookmark } from './display.js';
+import {
+  artifactToDisplay,
+  bookmarkToDisplay,
+  createDisplayItemFromPath,
+  type DisplayItem,
+  displayItemToBookmark,
+} from './display.js';
 import type { ArtifactPanelFace } from './index.js';
 import type { NS } from './locales.js';
 import { StarIcon } from './StarIcon.js';
@@ -47,6 +53,7 @@ export function ArtifactPanel({
   const expanded = useStore((state) => state.expanded);
   const width = useStore((state) => state.width);
   const activeTab = useStore((state) => state.activeTab);
+  const pendingOpenPath = useStore((state) => state.pendingOpenPath);
   const sessionSnapshot = useCurrentSession((snapshot) => snapshot);
   const projectPath = useSessions((state) => {
     const current = state.current;
@@ -111,14 +118,14 @@ export function ArtifactPanel({
     toggleBookmark(activePreviewItem, sessionSnapshot?.sessionId, projectPath, bookmarks);
   };
 
-  const openPreview = (item: DisplayItem): void => {
+  const openPreview = useCallback((item: DisplayItem): void => {
     setPreviewTabs((tabs) => {
       const exists = tabs.some((tab) => tab.id === item.id);
       const next = exists ? tabs : [...tabs, { id: item.id, item }];
       setActivePreviewId(item.id);
       return next;
     });
-  };
+  }, []);
 
   const closePreviewTab = (id: string): void => {
     setPreviewTabs((tabs) => {
@@ -157,6 +164,107 @@ export function ArtifactPanel({
       bgBase.includes('url(') || bgBase === 'transparent' || /^rgba?\(.*,\s*0\s*\)/.test(bgBase) || bgImage !== 'none';
     setOpaqueBg(isImageOrTransparent);
   }, [expanded]);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const FILE_LINK_SELECTOR = '[class*="fileLink"]';
+    const FILE_MENTION_SELECTOR = '[class*="fileMention"]';
+
+    const onClick = (event: MouseEvent): void => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const fileLink = target.closest(FILE_LINK_SELECTOR);
+      if (fileLink instanceof HTMLElement) {
+        const path = fileLink.textContent?.trim();
+        if (path !== undefined && path !== '') {
+          event.preventDefault();
+          event.stopPropagation();
+          actions.openArtifactByPath(path);
+          return;
+        }
+      }
+
+      // Intercept the ui-deliverables turn-tail produced-files chips.
+      const producedRow = target.closest('[data-produced-files-row]');
+      if (producedRow instanceof HTMLElement) {
+        const chip = target.closest('button');
+        if (chip instanceof HTMLButtonElement) {
+          const path = chip.title.trim();
+          if (path !== '') {
+            event.preventDefault();
+            event.stopPropagation();
+            actions.openArtifactByPath(path);
+            return;
+          }
+        }
+      }
+
+      // Intercept inline-code file mentions rendered by ui-deliverables.
+      const fileMention = target.closest(FILE_MENTION_SELECTOR);
+      if (fileMention instanceof HTMLElement) {
+        const path = fileMention.title.trim();
+        if (path !== '') {
+          event.preventDefault();
+          event.stopPropagation();
+          actions.openArtifactByPath(path);
+          return;
+        }
+      }
+
+      // Intercept markdown links whose href points to a local file, e.g.
+      // [sample.html](/Users/.../sample.html).
+      const anchor = target.closest('a');
+      if (anchor instanceof HTMLAnchorElement) {
+        const rawHref = anchor.getAttribute('href')?.trim();
+        if (rawHref !== undefined && rawHref !== '' && !isExternalUrl(rawHref)) {
+          const path = stripFileProtocol(rawHref);
+          if (looksLikeFilePath(path)) {
+            event.preventDefault();
+            event.stopPropagation();
+            actions.openArtifactByPath(path);
+            return;
+          }
+        }
+      }
+
+      // Also intercept inline <code> elements that contain what looks like an
+      // absolute file path, e.g. `/Users/.../cat.svg` in a generated message.
+      const code = target.closest('code');
+      if (code instanceof HTMLElement && code.closest('pre') === null) {
+        const path = code.textContent?.trim();
+        if (path !== undefined && looksLikeAbsolutePath(path)) {
+          event.preventDefault();
+          event.stopPropagation();
+          actions.openArtifactByPath(path);
+        }
+      }
+    };
+
+    document.addEventListener('click', onClick, true);
+    return () => {
+      document.removeEventListener('click', onClick, true);
+    };
+  }, [actions]);
+
+  useEffect(() => {
+    if (pendingOpenPath === undefined || projectPath === undefined) return;
+
+    const normalizedPath = stripFileProtocol(pendingOpenPath);
+    const absolutePath = normalizedPath.startsWith('/')
+      ? normalizedPath
+      : `${projectPath}/${normalizedPath.replace(/^\.\//, '')}`;
+
+    const existing = currentArtifacts.find((artifact) => artifact.path === absolutePath);
+    if (existing !== undefined) {
+      openPreview(artifactToDisplay(existing));
+    } else {
+      openPreview(createDisplayItemFromPath(absolutePath));
+    }
+
+    actions.clearPendingOpenPath();
+  }, [pendingOpenPath, projectPath, currentArtifacts, actions, openPreview]);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -356,4 +464,32 @@ function toggleBookmark(
   const resolvedSessionId = sessionId ?? item.sessionId;
   if (resolvedSessionId === undefined) return;
   void bookmarks.toggle(projectPath, displayItemToBookmark(item, resolvedSessionId));
+}
+
+function looksLikeAbsolutePath(text: string): boolean {
+  if (text.length < 2) return false;
+  if (text.startsWith('/')) return true;
+  if (/^[A-Za-z]:[\\/]/.test(text)) return true;
+  return false;
+}
+
+function looksLikeFilePath(text: string): boolean {
+  if (text.length < 2) return false;
+  if (text.startsWith('/')) return true;
+  if (/^[A-Za-z]:[\\/]/.test(text)) return true;
+  if (text.startsWith('./') || text.startsWith('../')) return true;
+  // A bare filename with an extension, e.g. "sample.html".
+  if (/^[^/]+\.[^./]+$/.test(text)) return true;
+  return false;
+}
+
+function isExternalUrl(href: string): boolean {
+  return /^(https?|ftp|mailto|data|blob):/i.test(href);
+}
+
+function stripFileProtocol(href: string): string {
+  if (href.startsWith('file://')) {
+    return href.slice('file://'.length);
+  }
+  return href;
 }

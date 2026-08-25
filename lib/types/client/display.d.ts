@@ -15,4 +15,6 @@ export declare function artifactToDisplay(artifact: Artifact): DisplayItem;
 export declare function bookmarkToDisplay(record: BookmarkRecord): DisplayItem;
 export declare function artifactToBookmark(artifact: Artifact, sessionId: string): BookmarkRecord;
 export declare function displayItemToBookmark(item: DisplayItem, sessionId: string | undefined): BookmarkRecord;
+/** Build a transient display item from an absolute file path. */
+export declare function createDisplayItemFromPath(path: string): DisplayItem;
 //# sourceMappingURL=display.d.ts.map

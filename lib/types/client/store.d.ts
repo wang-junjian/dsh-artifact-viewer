@@ -8,6 +8,8 @@ export interface ArtifactViewerState {
     expanded: boolean;
     /** Current panel width in pixels. */
     width: number;
+    /** Relative or absolute path queued for opening from a conversation link. */
+    pendingOpenPath?: string;
 }
 export declare const createArtifactViewerStore: () => import("@deepseek-ai/dsh-client-runtime/client").EngineStoreHandle<ArtifactViewerState, {
     togglePanel: (draft: ArtifactViewerState) => void;
@@ -16,5 +18,7 @@ export declare const createArtifactViewerStore: () => import("@deepseek-ai/dsh-c
     setTab: (draft: ArtifactViewerState, tab: "current" | "bookmarks") => void;
     toggleExpand: (draft: ArtifactViewerState) => void;
     setWidth: (draft: ArtifactViewerState, width: number) => void;
+    openArtifactByPath: (draft: ArtifactViewerState, path: string) => void;
+    clearPendingOpenPath: (draft: ArtifactViewerState) => void;
 }>;
 //# sourceMappingURL=store.d.ts.map

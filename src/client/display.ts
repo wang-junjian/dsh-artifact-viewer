@@ -1,6 +1,7 @@
 /** Display helpers: convert artifacts and bookmarks into a common list item. */
 
 import type { BookmarkRecord } from '../index.js';
+import { basename, inferFileKind } from './artifacts.js';
 import type { Artifact } from './types.js';
 
 export interface DisplayItem {
@@ -60,5 +61,16 @@ export function displayItemToBookmark(item: DisplayItem, sessionId: string | und
     seq: item.seq,
     sessionId: sessionId ?? item.sessionId ?? '',
     createdAt: Date.now(),
+  };
+}
+
+/** Build a transient display item from an absolute file path. */
+export function createDisplayItemFromPath(path: string): DisplayItem {
+  return {
+    id: `path:${path}`,
+    kind: inferFileKind(path),
+    name: basename(path),
+    seq: 0,
+    path,
   };
 }

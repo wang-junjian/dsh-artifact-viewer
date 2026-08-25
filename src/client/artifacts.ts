@@ -108,7 +108,7 @@ function isTextBlock(block: ContentBlock): block is { type: 'text'; text: string
   return (block as { type?: string }).type === 'text';
 }
 
-function inferFileKind(path: string): ArtifactKind {
+export function inferFileKind(path: string): ArtifactKind {
   const lower = path.toLowerCase();
   if (
     lower.endsWith('.png') ||
@@ -128,7 +128,7 @@ function inferFileKind(path: string): ArtifactKind {
   return 'file';
 }
 
-function basename(path: string): string {
+export function basename(path: string): string {
   const at = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
   return at === -1 ? path : path.slice(at + 1);
 }
