@@ -90,7 +90,7 @@ src/
 | 文件类型 | 渲染方式 |
 |---------|---------|
 | HTML、HTM | 沙箱 iframe |
-| Markdown、MD | Markdown 文本 |
+| Markdown、MD | Markdown 文本（mermaid 代码块渲染为 SVG 图表） |
 | SVG、PNG、JPG、JPEG、WEBP、GIF | 图片 |
 | JSON | 语法高亮代码（通过 CodeBlock） |
 | 源代码（py、js、ts、jsx、tsx、css、scss、less、rs、go、c、cpp、cc、java、kt、swift、rb、php、sh、sql、xml、yaml、yml、toml、dockerfile、txt、log） | 语法高亮代码 |

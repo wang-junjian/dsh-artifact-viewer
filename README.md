@@ -94,7 +94,7 @@ src/
 | File kind | Rendering |
 |-----------|-----------|
 | HTML, HTM | Sandboxed iframe |
-| Markdown, MD | Markdown text |
+| Markdown, MD | Markdown text (Mermaid fences rendered as SVG diagrams) |
 | SVG, PNG, JPG, JPEG, WEBP, GIF | Image |
 | JSON | Syntax-highlighted code (via CodeBlock) |
 | Source code (py, js, ts, jsx, tsx, css, scss, less, rs, go, c, cpp, cc, java, kt, swift, rb, php, sh, sql, xml, yaml, yml, toml, dockerfile, txt, log) | Syntax-highlighted code |

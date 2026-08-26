@@ -63,6 +63,8 @@ src/
     ArtifactPanel.tsx         # shell.overlay panel (list + preview + bookmarks tabs)
     ArtifactList.tsx          # Artifact list inside the panel
     ArtifactPreview.tsx       # Preview pane for the selected artifact
+    MermaidDiagram.tsx        # Mermaid fence renderer (inline SVG) for Markdown previews
+    mermaid.ts                # Split Markdown into markdown/mermaid segments
     ArtifactMessageImages.tsx # conversation.message.images replacement with star overlay
     ArtifactKindIcon.tsx      # Per-kind icon shown before an artifact name
     StarIcon.tsx              # 16x16 bookmark star icon

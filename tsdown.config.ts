@@ -117,6 +117,9 @@ export default {
   }],
   outputOptions: {
     entryFileNames: 'client.js',
+    // The web shell loads exactly one factory file; mermaid's own dynamic
+    // imports must be folded back into the entry instead of split chunks.
+    inlineDynamicImports: true,
     banner: `window.__ModuleLoader__.load({ id: ${JSON.stringify(PLUGIN_ID)}, factory: (require) => {`,
     footer: 'return module.exports; } });',
     intro: 'var module = { exports: {} }; var exports = module.exports;',

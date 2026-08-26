@@ -14,6 +14,8 @@ import { useEffect, useMemo, useState } from 'react';
 import css from './ArtifactPreview.module.css';
 import type { DisplayItem } from './display.js';
 import type { ArtifactViewerKey } from './locales.js';
+import { MermaidDiagram } from './MermaidDiagram.js';
+import { splitMermaidSegments } from './mermaid.js';
 import { StarIcon } from './StarIcon.js';
 
 interface ArtifactPreviewProps {
@@ -313,7 +315,7 @@ function renderPreview(preview: Preview, t: (key: ArtifactViewerKey) => string):
         <img src={`data:image/svg+xml;utf8,${encodeURIComponent(preview.content)}`} alt="" className={css.image} />
       );
     case 'markdown':
-      return <MarkdownText text={preview.content} />;
+      return <MarkdownPreview content={preview.content} />;
     case 'code':
       return (
         <CodeBlock
@@ -329,6 +331,28 @@ function renderPreview(preview: Preview, t: (key: ArtifactViewerKey) => string):
     default:
       return <div className={css.placeholder}>{t('artifact.kind.unknown')}</div>;
   }
+}
+
+function MarkdownPreview({ content }: { content: string }): React.ReactNode {
+  const segments = splitMermaidSegments(content);
+  if (segments.every((segment) => segment.type === 'markdown')) {
+    return <MarkdownText text={content} />;
+  }
+  return (
+    <>
+      {segments.map((segment) =>
+        segment.type === 'markdown' ? (
+          <MarkdownText key={`markdown:${segment.content}`} text={segment.content} />
+        ) : (
+          <MermaidDiagram
+            key={`mermaid:${segment.content}`}
+            source={segment.content}
+            fallback={<MarkdownText text={`\`\`\`mermaid\n${segment.content}\n\`\`\``} />}
+          />
+        ),
+      )}
+    </>
+  );
 }
 
 function errorMessage(e: unknown): string {

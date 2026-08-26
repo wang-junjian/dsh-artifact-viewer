@@ -155,7 +155,7 @@ single slot "conversation.message.images" already has a registration at priority
 | 类型 | 推荐渲染方式 |
 |------|-------------|
 | HTML/HTM | 沙箱 iframe |
-| Markdown | `MarkdownText` |
+| Markdown | `MarkdownText`；先用 `splitMermaidSegments` 切出 ```mermaid 围栏块，交给 `MermaidDiagram` 渲染为 SVG，渲染失败回退为代码块 |
 | 图片/SVG | `<img>` |
 | 源代码/JSON | `CodeBlock`，但隐藏自带标题和复制按钮，自行控制样式 |
 | 纯文本 | `<pre>` |
@@ -242,6 +242,9 @@ DSH 共享的 `clientBundle` 预设未对外发布，插件需要在自己的 `t
 - tsc 只编译 TS 不拷贝样式表，resolveId 里要把 `lib/` 路径映射回 `src/` 再读 CSS。
 - `define` 里注入 `process.env.NODE_ENV` 和 `import.meta.env.MODE`，避免浏览器端
   引用未定义变量。
+- web shell 只加载**一个** factory 文件，所以 `outputOptions.inlineDynamicImports`
+  必须为 `true`：像 mermaid 这样内部使用动态 import 的库，不内联会被 tsdown 拆成
+  数十个 chunk 文件，运行时 module loader 无法加载它们。
 
 ### 4.2 Purity gate
 

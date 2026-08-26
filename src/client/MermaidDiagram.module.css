@@ -1,0 +1,11 @@
+.diagram {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  padding: 8px 0;
+}
+
+.diagram svg {
+  max-width: 100%;
+  height: auto;
+}
