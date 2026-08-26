@@ -9,7 +9,7 @@ tree; it is built as a standalone plugin and loaded into the `web` profile.
 ## What it does
 
 - **Detects artifacts** produced during a conversation: files created or edited
-  by tools, JSON tool results, and image attachments in messages.
+  by tools and image attachments in messages.
 - **Renders a right-hand overlay panel** (registered into `shell.overlay`)
   listing artifacts for the current session.
 - **Lets users bookmark artifacts**; bookmarks are persisted in the Harness

@@ -14,7 +14,7 @@ profile with `dsh plugin --profile web add <pkg>`.
 The plugin:
 
 - Detects artifacts produced during a conversation (files created/edited by
-  tools, JSON tool results, image attachments) and lists them in a right-hand
+  tools, image attachments) and lists them in a right-hand
   overlay panel registered into the `shell.overlay` slot.
 - Lets users bookmark artifacts; bookmarks are persisted by the host half at
   `~/.dsh/storages/artifact-viewer/bookmarks.json` (grouped by canonical

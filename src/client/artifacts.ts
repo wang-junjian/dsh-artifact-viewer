@@ -63,21 +63,6 @@ function collectToolArtifacts(node: ToolResultNode, add: (artifact: Artifact) =>
       }
     }
   }
-
-  for (const block of node.content) {
-    if (isTextBlock(block)) {
-      const text = block.text.trim();
-      if (looksLikeJson(text)) {
-        add({
-          id: `json:${node.seq}:${hash(text)}`,
-          kind: 'json',
-          name: `Result ${node.seq}`,
-          source: 'tool',
-          seq: node.seq,
-        });
-      }
-    }
-  }
 }
 
 function collectUserArtifacts(node: UserMessageNode, add: (artifact: Artifact) => void): void {
@@ -114,10 +99,6 @@ function isImageBlock(block: ContentBlock): block is { type: 'image'; attachment
   return (block as { type?: string }).type === 'image';
 }
 
-function isTextBlock(block: ContentBlock): block is { type: 'text'; text: string } {
-  return (block as { type?: string }).type === 'text';
-}
-
 export function inferFileKind(path: string): ArtifactKind {
   const lower = path.toLowerCase();
   if (
@@ -141,24 +122,4 @@ export function inferFileKind(path: string): ArtifactKind {
 export function basename(path: string): string {
   const at = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
   return at === -1 ? path : path.slice(at + 1);
-}
-
-function looksLikeJson(text: string): boolean {
-  if (!((text.startsWith('{') && text.endsWith('}')) || (text.startsWith('[') && text.endsWith(']')))) {
-    return false;
-  }
-  try {
-    JSON.parse(text);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function hash(text: string): string {
-  let h = 0;
-  for (let i = 0; i < text.length; i++) {
-    h = (h * 31 + text.charCodeAt(i)) | 0;
-  }
-  return String(h);
 }
