@@ -70,3 +70,13 @@
 .star:hover {
   color: var(--dsw-alias-label-brand);
 }
+
+.starIndicator {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--dsw-alias-label-brand);
+}

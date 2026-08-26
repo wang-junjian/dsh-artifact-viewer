@@ -1,6 +1,6 @@
 {
   "name": "@wangjunjian/dsh-artifact-viewer",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "DeepSeek Harness bundle plugin that adds an artifact sidebar and bookmarking for agent conversations.",
   "repository": {
     "type": "git",

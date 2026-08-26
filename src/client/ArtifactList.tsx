@@ -51,23 +51,33 @@ export function ArtifactList({
               </button>
             </Tooltip>
           )}
-          <Tooltip
-            label={bookmarkIds.has(item.id) ? t('artifact.remove') : t('artifact.bookmark')}
-            side="bottom"
-            delayMs={500}
-          >
-            <button
-              type="button"
-              className={css.star}
-              onClick={(event) => {
-                event.stopPropagation();
-                onToggleBookmark(item);
-              }}
-              aria-label={bookmarkIds.has(item.id) ? t('artifact.bookmarked') : t('artifact.bookmark')}
+          {showSessionLink ? (
+            <Tooltip
+              label={bookmarkIds.has(item.id) ? t('artifact.remove') : t('artifact.bookmark')}
+              side="bottom"
+              delayMs={500}
             >
-              <StarIcon size={16} filled={bookmarkIds.has(item.id)} />
-            </button>
-          </Tooltip>
+              <button
+                type="button"
+                className={css.star}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onToggleBookmark(item);
+                }}
+                aria-label={bookmarkIds.has(item.id) ? t('artifact.bookmarked') : t('artifact.bookmark')}
+              >
+                <StarIcon size={16} filled={bookmarkIds.has(item.id)} />
+              </button>
+            </Tooltip>
+          ) : (
+            // Current-session rows: bookmarking happens in the preview header;
+            // the star here only marks already-bookmarked items.
+            bookmarkIds.has(item.id) && (
+              <span className={css.starIndicator} title={t('artifact.bookmarked')}>
+                <StarIcon size={16} filled />
+              </span>
+            )
+          )}
         </li>
       ))}
     </ul>

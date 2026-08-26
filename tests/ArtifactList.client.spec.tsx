@@ -31,19 +31,36 @@ describe('ArtifactList', () => {
     expect(onSelect).toHaveBeenCalledWith('file:/tmp/foo.ts:1');
   });
 
-  it('toggles bookmark and stops propagation', () => {
+  it('toggles bookmark and stops propagation in the bookmarks tab', () => {
     const onToggleBookmark = vi.fn();
     render(
       <ArtifactList
         items={[item()]}
         bookmarkIds={new Set()}
+        showSessionLink
         onSelect={vi.fn()}
         onToggleBookmark={onToggleBookmark}
+        onOpenSession={vi.fn()}
         t={t}
       />,
     );
     fireEvent.click(screen.getByLabelText(t('artifact.bookmark')));
     expect(onToggleBookmark).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows no bookmark button in the current-session list, only an indicator for bookmarked items', () => {
+    render(
+      <ArtifactList
+        items={[item(), item({ id: 'file:/tmp/bar.ts:2', name: 'bar.ts' })]}
+        bookmarkIds={new Set(['file:/tmp/bar.ts:2'])}
+        onSelect={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        t={t}
+      />,
+    );
+    expect(screen.queryByLabelText(t('artifact.bookmark'))).toBeNull();
+    expect(screen.queryByLabelText(t('artifact.bookmarked'))).toBeNull();
+    expect(screen.getByTitle(t('artifact.bookmarked'))).not.toBeNull();
   });
 
   it('shows session link in bookmarks tab and navigates on click', () => {
