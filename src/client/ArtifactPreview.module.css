@@ -36,6 +36,7 @@
 .bookmark,
 .copy,
 .open,
+.openFolder,
 .session {
   flex: none;
   display: flex;
@@ -57,7 +58,8 @@
 
 .session:hover,
 .copy:hover,
-.open:hover {
+.open:hover,
+.openFolder:hover {
   color: var(--dsw-alias-label-brand);
 }
 

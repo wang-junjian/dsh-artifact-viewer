@@ -24,7 +24,8 @@ tree; it is built as a standalone plugin and loaded into the `web` profile.
   artifact panel instead of the host default application.
 - **Opens clicked artifacts in preview tabs** inside the panel and renders
   HTML (sandboxed iframe), Markdown, images, SVG, JSON, and source code.
-- **Can open files with the host default application** via the workspace API.
+- **Can open files with the host default application** via the workspace API,
+  or open the containing folder of a previewed artifact.
 - **Expands the panel to full window** with a header button; automatically uses
   an opaque background when the user has set a background image, while keeping
   the translucent blurred look for solid-color themes.

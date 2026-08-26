@@ -123,3 +123,11 @@ export function basename(path: string): string {
   const at = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
   return at === -1 ? path : path.slice(at + 1);
 }
+
+/** Parent directory of a POSIX or Windows path; falls back to the root separator. */
+export function dirname(path: string): string {
+  const at = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
+  if (at === -1) return path;
+  const dir = path.slice(0, at);
+  return dir === '' ? path.slice(0, 1) : dir;
+}

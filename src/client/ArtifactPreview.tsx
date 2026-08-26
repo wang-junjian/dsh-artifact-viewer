@@ -4,6 +4,7 @@ import type { ConnectionHandle } from '@deepseek-ai/dsh-client-connection/client
 import {
   CodeBlock,
   IconCopyOutline16,
+  IconFolderClose16,
   IconFolderOpenOutline16,
   IconNewChatOutline16,
   MarkdownText,
@@ -12,6 +13,7 @@ import {
 } from '@deepseek-ai/dsh-client-ui-primitives';
 import { useEffect, useMemo, useState } from 'react';
 import css from './ArtifactPreview.module.css';
+import { dirname } from './artifacts.js';
 import type { DisplayItem } from './display.js';
 import type { ArtifactViewerKey } from './locales.js';
 import { MermaidDiagram } from './MermaidDiagram.js';
@@ -185,6 +187,20 @@ export function ArtifactPreview({
                 aria-label={t('artifact.open')}
               >
                 <IconFolderOpenOutline16 size={14} />
+              </button>
+            </Tooltip>
+          )}
+          {item.path !== undefined && (
+            <Tooltip label={t('artifact.openFolder')} side="bottom" delayMs={500}>
+              <button
+                type="button"
+                className={css.openFolder}
+                onClick={() => {
+                  void onOpenPath(dirname(item.path!));
+                }}
+                aria-label={t('artifact.openFolder')}
+              >
+                <IconFolderClose16 size={14} />
               </button>
             </Tooltip>
           )}
