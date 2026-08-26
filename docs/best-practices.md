@@ -338,12 +338,40 @@ OIDC 免 token 发布必须在 npm 侧登记信任关系，否则最后一步会
    - Repository：如 `dsh-artifact-viewer`
    - Workflow filename：`release.yml`
    - Environment：留空
-3. 之后每次发版：bump version → commit/push → 在 GitHub 创建 Release（tag 形如
-   `v0.2.0`）→ 工作流自动完成发布。
+3. 之后每次发版：bump version → commit/push → 在 GitHub 创建 Release → 工作流自动
+   完成发布（具体命令见下节）。
 
-**踩坑记录**：tag push 不会触发 `release: [published]`，必须真正创建 GitHub Release；
-发布失败后配置好 trusted publisher，直接在 Actions 页面 "Re-run failed jobs" 即可，
-无需重建 Release。
+### 7.4 日常发版流程（完整命令序列）
+
+每次发布新版本，按顺序执行（版本号始终从 package.json 自动提取，不手工输入）：
+
+```sh
+# 1. bump package.json 的 version（如 0.2.0 → 0.2.1）后：
+version="$(node -p "require('./package.json').version")"
+git commit -am "release: v${version}"
+git tag "v${version}"
+git push origin main --tags
+
+# 2. 创建 GitHub Release —— 这是触发发布工作流的关键一步，
+#    必须在 tag push 之后单独执行（tag 本身不是 Release）
+gh release create "v${version}" --title "v${version}" --notes "本次变更说明"
+
+# 3. 观察发布结果
+gh run watch --workflow=Publish      # 或在 Actions 页面查看
+npm view <pkg> version               # 确认 latest 已更新（新包有几分钟传播延迟）
+```
+
+也可以在 GitHub 网页上操作：Releases → "Draft a new release" → 选择已推送的 tag →
+Publish release，效果与 `gh release create` 完全相同。
+
+**易错点**：`gh release create` 用的是已存在的 tag，不会重复打 tag；如果 tag 忘了
+push，`gh release create` 会提示选择或创建 tag，注意核对指向的 commit。
+
+**踩坑记录**：`git push --tags` 不会触发 `release: [published]`——tag 只是 Git 引用，
+GitHub Release 是独立的对象。只 push tag 时 Actions 里只会出现 CI 工作流（显示名是
+commit message，如 "release: v0.2.1"，容易被误认为发布已成功），Publish 工作流不会
+运行，Releases 页面也没有对应条目。发布失败后（例如 trusted publisher 尚未配置），
+配置好原因并在 Actions 页面 "Re-run failed jobs" 即可，无需重建 Release。
 
 ## 8. 安装与升级注意事项
 
@@ -401,7 +429,9 @@ dsh plugin --profile web remove @wang-junjian/dsh-artifact-viewer
 5. 运行 `pnpm run lint`、`pnpm run typecheck`、`pnpm run build`、`pnpm test`。
 6. 在 DSH 中通过 `dsh plugin --profile web add <path>` 安装并验证。
 7. 迭代 UI 细节，注意主题背景和暗色模式。
-8. 发布前 bump version，push 后创建 GitHub Release 触发自动发布。
+8. 发布：bump package.json 的 version → `git commit -am "release: vX.Y.Z"` →
+   `git tag vX.Y.Z` → `git push origin main --tags` →
+   `gh release create vX.Y.Z --title "vX.Y.Z" --notes "..."`（详见 7.4）。
 
 ---
 

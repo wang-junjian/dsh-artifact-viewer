@@ -66,6 +66,17 @@ export function ArtifactPanel({
   const [maxVisible, setMaxVisible] = useState<number>(Infinity);
   const [opaqueBg, setOpaqueBg] = useState(false);
   const tabsRef = useRef<HTMLDivElement>(null);
+  const sessionId = sessionSnapshot?.sessionId;
+  const lastSessionIdRef = useRef(sessionId);
+
+  useEffect(() => {
+    if (lastSessionIdRef.current === sessionId) return;
+    lastSessionIdRef.current = sessionId;
+    // Opened preview documents belong to the session they came from; switching
+    // sessions invalidates them, so close every preview tab.
+    setPreviewTabs([]);
+    setActivePreviewId(undefined);
+  }, [sessionId]);
 
   useEffect(() => {
     if (panelOpen && projectPath !== undefined) {
@@ -362,15 +373,16 @@ export function ArtifactPanel({
         {previewTabs.length > 0 && (
           <div ref={tabsRef} className={css.previewTabs}>
             {previewTabs.slice(-maxVisible).map((tab) => (
-              <button
-                type="button"
-                key={tab.id}
-                className={tab.id === activePreviewId ? css.previewTabActive : css.previewTab}
-                onClick={() => {
-                  setActivePreviewId(tab.id);
-                }}
-              >
-                <span className={css.previewTabName}>{tab.item.name}</span>
+              <div key={tab.id} className={tab.id === activePreviewId ? css.previewTabActive : css.previewTab}>
+                <button
+                  type="button"
+                  className={css.previewTabName}
+                  onClick={() => {
+                    setActivePreviewId(tab.id);
+                  }}
+                >
+                  {tab.item.name}
+                </button>
                 <button
                   type="button"
                   className={css.previewTabClose}
@@ -382,7 +394,7 @@ export function ArtifactPanel({
                 >
                   <IconCloseOutline16 size={12} />
                 </button>
-              </button>
+              </div>
             ))}
           </div>
         )}
