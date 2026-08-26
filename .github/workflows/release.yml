@@ -20,7 +20,6 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-          registry-url: 'https://registry.npmjs.org' # 必须配置，开启 OIDC Auth 注入
 
       # Trusted publishing requires npm >= 11.5.1; Node 22 ships npm 10.
       - name: Upgrade npm for trusted publishing
@@ -41,8 +40,5 @@ jobs:
             exit 1
           fi
 
-      # 显式传递 NODE_AUTH_TOKEN
       - name: Publish to npm
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 配合 setup-node 自动获取 OIDC 凭证
